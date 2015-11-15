@@ -1,7 +1,7 @@
 # nwjs-analytics
 Node-Webkit Google Analytics integration
 
-Simple integration of Google Analytics into  Node-Webkit application
+Simple integration of Google Analytics Application (named Analytics for Mobile Apps) into  Node-Webkit application
 
 ### Installation
 
