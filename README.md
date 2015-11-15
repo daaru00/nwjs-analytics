@@ -111,6 +111,16 @@ var analyticts = {
 	...
 ```
 
+#### AngularJS ui-router integration
+```javascript
+App.run(['$rootScope', function($rootScope,) {
+    $rootScope.$on('$stateChangeSuccess', 
+        function(event, toState, toParams, fromState, fromParams){
+            analyticts.screenView(toState.name);
+    })
+}]);
+```
+
 ### Useful Links
 
 Google Analytics Collect API:
