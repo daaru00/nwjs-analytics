@@ -31,6 +31,9 @@ var analyticts = {
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
         http.onreadystatechange = function() {
+			if(analyticts.debug)
+                console.log(http.response);
+
             if(http.readyState == 4 && http.status == 200) {
                 if(callback)
                     callback(true);
