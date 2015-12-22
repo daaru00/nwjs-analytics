@@ -73,6 +73,7 @@ var data = {
 	'ec' : 'category',
 	'ea' : 'action'
 }
+analyticts.custom(data);
 ```
 
 ### Extra
