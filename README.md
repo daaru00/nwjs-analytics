@@ -16,42 +16,54 @@ include **analytics.js** in your index.html file
 Set your **tracking ID**, **application name** and **application version** in ```analytics.js``` file
 
 ```javascript
-var analyticts = {
+var analytics = {
     trackID: 'UA-XXXXXX-X', //tracking id
-    appName: 'application',  //application name
+    appName: 'appname',  //application name
     appVersion: '1.0.0',
     ...
 ```
 
-If you are using a User-ID traking set clientID
+If you are using a User-ID traking set userID
 ```javascript
-var analyticts = {
+var analytics = {
     ...
-    clientID: 'john-smith',
+    userID: 'john-smith',
     ...
 ```
 or at runtime process
 ```javascript
-analyticts.clientID = 'john-smith';
+analytics.userID = 'john-smith';
 ```
 otherwise will be generate a random client id
+
+If you want to change clientID you can use this:
+```javascript
+var analytics = {
+    ...
+    clientID: 'mac-01',
+    ...
+```
+or at runtime process
+```javascript
+analytics.clientID = 'mac01';
+```
 
 ### Usage
 
 #### Screen View
 
 ```javascript
-analyticts.screenView('login');
+analytics.screenView('login');
 ```
 #### Event
 
 ```javascript
-analyticts.event('category', 'action', 'label', 'value');
+analytics.event('category', 'action', 'label', 'value');
 ```
 #### Exception
 
 ```javascript
-analyticts.event('NotFoundError', 0); //second parameters is fatal flag
+analytics.event('NotFoundError', 0); //second parameters is fatal flag
 ```
 
 ### Timing
@@ -61,7 +73,35 @@ var startTime = new Date().getTime();
 ...
 var endTime = new Date().getTime();
 var timeSpent = endTime - startTime;
-analyticts.event('category', 'variable', timeSpent, 'label');
+analytics.event('category', 'variable', timeSpent, 'label');
+```
+
+### Ecommerce
+
+Currency setup
+
+```javascript
+var analytics = {
+    ...
+    currency: "USD",
+    ...
+```
+or at runtime process
+```javascript
+analytics.currency = "USD";
+```
+
+To send ecommerce data
+
+```javascript
+var order_id = "O145KL";
+var total = 15.20;
+var item = [
+    {id: 40,name: "item1", price: 15.00, qty: 1},
+    {id: 12,name: "item2", price: 0.20, qty: 1}
+]
+ecommerce.transactionID = "O145KL"; //optional, if is not set a random id will be generated
+ecommerce.transaction(total, items)
 ```
 
 ### Custom API
@@ -73,7 +113,7 @@ var data = {
 	'ec' : 'category',
 	'ea' : 'action'
 }
-analyticts.custom(data);
+analytics.custom(data);
 ```
 
 ### Extra
@@ -81,7 +121,7 @@ analyticts.custom(data);
 #### Debug Mode
 You can set ```debug``` property ```true``` in **analytics.js** file to check hit parsing
 ```javascript
-var analyticts = {
+var analytics = {
     ...
 	debug: true,   
 	...
@@ -106,7 +146,7 @@ output example
 
 You can set ```performanceTracking``` property ```true``` in **analytics.js** file to automatically send load page timing
 ```javascript
-var analyticts = {
+var analytics = {
     ...
 	performanceTracking: true,   
 	...
@@ -117,7 +157,7 @@ var analyticts = {
 App.run(['$rootScope', function($rootScope,) {
     $rootScope.$on('$stateChangeSuccess', 
         function(event, toState, toParams, fromState, fromParams){
-            analyticts.screenView(toState.name);
+            analytics.screenView(toState.name);
     })
 }]);
 ```
