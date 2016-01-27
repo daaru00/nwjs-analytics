@@ -1,17 +1,40 @@
+/*
+ * name: nwjs-analytics -Node-Webkit Google Analytics integration
+ * version: 1.0.2
+ * github: https://github.com/Daaru00/nwjs-analytics
+ */
 
-var analyticts = {
+
+var analytics = {
     apiVersion: '1',
-    trackID: 'UA-XXXXXX-X', //tracking id
+    trackID: 'UA-XXXXXXXX-X',
     clientID: null,
-	appName: 'application',  //application name
-	appVersion: '1.0.0',  //application version   
-	debug: false,    
-	performanceTracking: true,    
-    sendRequest: function(data, callback){       
-        if(!this.clientID)
+    userID: null,
+	appName: 'appname',
+	appVersion: '1.0.0',
+	debug: false,
+	performanceTracking: true,
+	userLanguage: "it",
+    currency: "EUR",
+    sendRequest: function(data, callback){
+        if(!this.clientID || this.clientID == null)
             this.clientID = this.generateClientID();
 
-        var postData = "v="+this.apiVersion+"&tid="+this.trackID+"&cid="+this.clientID+"&an="+this.appName+"&av="+this.appVersion;
+        if(!this.userID || this.userID == null)
+            this.userID = this.generateClientID();
+
+        var postData = "v="+this.apiVersion
+                        +"&tid="+this.trackID
+                        +"&cid="+this.clientID
+                        +"&uid="+this.userID
+                        +"&an="+this.appName
+                        +"&av="+this.appVersion
+                        +"&sr="+this.getScreenResolution()
+                        +"&vp="+this.getViewportSize()
+                        +"&sd="+this.getColorDept()
+                        +"&ul="+this.userLanguage
+                        +"&ua="+this.getUserAgent()
+                        +"&ds=app";
 
         Object.keys(data).forEach(function(key) {
             var val = data[key];
@@ -31,7 +54,7 @@ var analyticts = {
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
         http.onreadystatechange = function() {
-			if(analyticts.debug)
+            if(analytics.debug)
                 console.log(http.response);
 
             if(http.readyState == 4 && http.status == 200) {
@@ -53,13 +76,25 @@ var analyticts = {
         for( var i=0; i < 5; i++ )
             id += possibilities.charAt(Math.floor(Math.random() * possibilities.length));
         return id;
-    },    
-    
+    },
+    getScreenResolution: function(){
+        return screen.width+"x"+screen.height;
+    },
+    getColorDept: function(){
+        return screen.colorDepth+"-bits";
+    },
+    getUserAgent: function(){
+        return navigator.userAgent;
+    },
+    getViewportSize: function(){
+        return window.screen.availWidth+"x"+window.screen.availHeight;
+    },
+
     /*
-     * Measurement Protocol 
+     * Measurement Protocol
      * [https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide]
      */
-    
+
     screenView: function(screename){
         var data = {
 			't' : 'screenview',
@@ -74,7 +109,7 @@ var analyticts = {
 			'ea' : action,
 			'el' : label,
 			'ev' : value,
-		}		
+		}
 		this.sendRequest(data);
     },
     exception: function(msg, fatal){
@@ -82,19 +117,58 @@ var analyticts = {
 			't' : 'exception',
 			'exd' : msg,
 			'exf' : fatal || 0
-		}		
+		}
 		this.sendRequest(data);
     },
     timing: function(category, variable, time, label){
-    
+
         var data = {
 			't' : 'timing',
 			'utc' : category,
 			'utv' : variable,
 			'utt' : time,
 			'utl' : label,
-		}		
+		}
 		this.sendRequest(data);
+    },
+    ecommerce:{
+        transactionID: false,
+        generateTransactionID: function()
+        {
+            var id = "";
+            var possibilities = "0123456789";
+            for( var i=0; i < 5; i++ )
+                id += possibilities.charAt(Math.floor(Math.random() * possibilities.length));
+            return id;
+        },
+        transaction: function(total, items){
+            var t_id = "";
+            if(!this.ecommerce.transactionID)
+                t_id = this.ecommerce.generateTransactionID();
+            else
+                t_id = this.ecommerce.transactionID;
+
+            var data = {
+                't' : 'transaction',
+                'ti' : t_id,
+                'tr' : total,
+                'cu' : this.currency,
+            }
+            this.sendRequest(data);
+
+            items.forEach(function(item){
+                var data = {
+                    't' : 'item',
+                    'ti' : t_id,
+                    'in' : item.name,
+                    'ip' : item.price,
+                    'iq' : item.qty,
+                    'ic' : item.id,
+                    'cu' : this.currency
+                }
+                this.sendRequest(data);
+            })
+        }
     },
     custom: function(data){
         this.sendRequest(data);
@@ -106,17 +180,16 @@ var analyticts = {
  */
 
 window.addEventListener("load", function() {
-    
-    if(analyticts.performanceTracking)
+
+    if(analytics.performanceTracking)
     {
         setTimeout(function() {
             var timing = window.performance.timing;
             var userTime = timing.loadEventEnd - timing.navigationStart;
-            
-            analyticts.timing("performance", "pageload", userTime);
-            
-          }, 0);  
+
+            analytics.timing("performance", "pageload", userTime);
+
+          }, 0);
     }
 
 }, false);
-
