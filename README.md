@@ -100,7 +100,7 @@ var item = [
     {id: 40,name: "item1", price: 15.00, qty: 1},
     {id: 12,name: "item2", price: 0.20, qty: 1}
 ]
-ecommerce.transactionID = "O145KL"; //optional, if is not set a random id will be generated
+ecommerce.transactionID = "O145KL"; //optional, if is not set a random id will be generate
 ecommerce.transaction(total, items)
 ```
 
