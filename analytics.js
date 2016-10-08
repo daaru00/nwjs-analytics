@@ -16,6 +16,8 @@ var analytics = {
 	performanceTracking: true,
 	userLanguage: "it",
     currency: "EUR",
+    lastScreenName: '',
+    
     sendRequest: function(data, callback){
         if(!this.clientID || this.clientID == null)
             this.clientID = this.generateClientID();
@@ -101,6 +103,7 @@ var analytics = {
 			'cd' : screename
 		}
 		this.sendRequest(data);
+        this.lastScreenName = screename;
     },
     event: function(category, action, label, value){
         var data = {
@@ -109,6 +112,7 @@ var analytics = {
 			'ea' : action,
 			'el' : label,
 			'ev' : value,
+            'cd' : this.lastScreenName,
 		}
 		this.sendRequest(data);
     },
