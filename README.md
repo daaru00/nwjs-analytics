@@ -73,7 +73,7 @@ var startTime = new Date().getTime();
 ...
 var endTime = new Date().getTime();
 var timeSpent = endTime - startTime;
-analytics.event('category', 'variable', timeSpent, 'label');
+analytics.timing('category', 'variable', timeSpent, 'label');
 ```
 
 ### Ecommerce
