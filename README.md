@@ -151,14 +151,42 @@ var analytics = {
 	performanceTracking: true,   
 	...
 ```
+**enabled by default**
+
+#### Error Tracking
+
+You can set ```errorTracking``` property ```true``` in **analytics.js** file to automatically send exception
+```javascript
+var analytics = {
+    ...
+	errorTracking: true,   
+	...
+```
+**enabled by default**
 
 #### AngularJS ui-router integration
 ```javascript
-App.run(['$rootScope', function($rootScope,) {
-    $rootScope.$on('$stateChangeSuccess', 
-        function(event, toState, toParams, fromState, fromParams){
-            analytics.screenView(toState.name);
+App.run(['$rootScope', function($rootScope) {
+    $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+        analytics.screenView(toState.name);
     })
+}]);
+```
+
+#### AngularJS ngRoute integration
+```javascript
+App.config(['$routeProvider', function($routeProvider) {
+    $routeProvider
+        .when('/', {
+            title: "Dashboard", //set view title
+            templateUrl: './views/dashboard.html',
+            controller: 'dashboardCtrl'
+        })
+}]);
+App.run(['$rootScope', function($rootScope, $route) {
+    $rootScope.$on('$routeChangeSuccess', function() {
+        if($route.current.title) analytics.screenView($route.current.title); //screenView value is Dashboard
+    });
 }]);
 ```
 
@@ -175,4 +203,3 @@ License
 ----
 
 MIT
-

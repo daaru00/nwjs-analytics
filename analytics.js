@@ -14,10 +14,11 @@ var analytics = {
 	appVersion: '1.0.0',
 	debug: false,
 	performanceTracking: true,
-	userLanguage: "it",
+	errorTracking: true,
+	userLanguage: "en",
     currency: "EUR",
     lastScreenName: '',
-    
+
     sendRequest: function(data, callback){
         if(!this.clientID || this.clientID == null)
             this.clientID = this.generateClientID();
@@ -197,3 +198,25 @@ window.addEventListener("load", function() {
     }
 
 }, false);
+
+/*
+ * Error Reporting
+ */
+
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    var message = [
+        'Message: ' + msg,
+        'Line: ' + lineNo,
+        'Column: ' + columnNo,
+        'Error object: ' + JSON.stringify(error)
+    ].join(' - ');
+
+    if(analytics.errorTracking)
+    {
+        setTimeout(function() {
+            analytics.exception(message.toString());
+        }, 0);
+    }
+
+    return false;
+};
